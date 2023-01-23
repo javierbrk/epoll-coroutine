@@ -5,29 +5,45 @@
 #include <coroutine>
 #include <iostream>
 
+static int prcounter =0;
+
 namespace std
 {
-    template <typename T> struct task;
+    template <typename T>
+    struct task;
     namespace detail
     {
-
         template <typename T>
         struct promise_type_base
         {
+            int number=0;
+            promise_type_base()
+            {
+                number = prcounter;
+                prcounter++;
+                std::cout << number<<" -- Promise: ctor # \n";
+            }
+            ~promise_type_base()
+            {
+                std::cout << number << " -- Promise: dtor\n";
+            }
             coroutine_handle<> waiter; // who waits on this coroutine
             task<T> get_return_object();
             suspend_always initial_suspend() { return {}; }
-            struct final_awaiter {
-                bool await_ready() { return false; }
-                void await_resume() {}
+            struct final_awaiter
+            {
+                bool await_ready() noexcept { return false; }
+                void await_resume() noexcept {}
 
                 template <typename promise_type>
-                    void await_suspend(coroutine_handle<promise_type> me) {
-                        if (me.promise().waiter)
-                            me.promise().waiter.resume();
-                    }
+                void await_suspend(coroutine_handle<promise_type> me) noexcept
+                {
+                    if (me.promise().waiter)
+                        me.promise().waiter.resume();
+                }
             };
-            auto final_suspend() {
+            auto final_suspend() noexcept
+            {
                 return final_awaiter{};
             }
             void unhandled_exception() {}
@@ -38,7 +54,7 @@ namespace std
             T result;
             void return_value(T value)
             {
-                result = value;
+                result = std::move(value);
             }
             T await_resume()
             {
@@ -56,45 +72,60 @@ namespace std
 
     }
 
-template <typename T = void>
-struct task
-{
-    using promise_type = detail::promise_type<T>;
-    task()
-      : handle_{nullptr}
-    {}
-    task(coroutine_handle<promise_type> handle)
-      : handle_{handle}
-    {}
-    /*
-    ~task()
+    template <typename T = void>
+    struct task
     {
-        if (handle_)
-            handle_.destroy();
-    }
-    */
+        using promise_type = detail::promise_type<T>;
+        task()
+            : handle_{nullptr}
+        {
+        }
+        task(coroutine_handle<promise_type> handle)
+            : handle_{handle}
+        {
+        }
+        ~task()
+        {
+            std::cout << "task destroy " << std::endl;
 
-    bool await_ready() { return false; }
-    T await_resume();
-    void await_suspend(coroutine_handle<> waiter) {
-        handle_.promise().waiter = waiter;
-        handle_.resume();
-    }
+            if (handle_)
+            {
+                std::cout << "efective task destroy " << std::endl;
+                std::cout << handle_.done() << std::endl;
+                handle_.destroy();
+            }
+            else
+            {
+                std::cout << "no hanle" << std::endl;
+            }
+        }
 
-    void resume() {
-        handle_.resume();
-    }
-    coroutine_handle<promise_type> handle_;
-};
+        bool await_ready() { return false; }
+        T await_resume();
+        void await_suspend(coroutine_handle<> waiter)
+        {
+            handle_.promise().waiter = waiter;
+            handle_.resume();
+        }
 
-template <typename T>
-T task<T>::await_resume() {
-    return handle_.promise().result;
-}
-template <>
-inline void task<void>::await_resume() {}
+        void resume()
+        {
+            handle_.resume();
+        }
+        coroutine_handle<promise_type> handle_;
+    };
+
+    template <typename T>
+    T task<T>::await_resume()
+    {
+        // usar move para && y en caso de que no lo sea no hay problema pues no lo afecta
+        return std::move(handle_.promise().result);
+    }
+    template <>
+    inline void task<void>::await_resume() {}
     namespace detail
     {
+        // the formal return value of the coroutine
         template <typename T>
         task<T> promise_type<T>::get_return_object()
         {

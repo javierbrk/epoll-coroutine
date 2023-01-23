@@ -22,7 +22,7 @@ std::task<bool> inside_loop(Socket& socket)
     co_return true;
 }
 
-std::task<> echo_socket(std::shared_ptr<Socket> socket)
+std::task<> echo_socket(std::unique_ptr<Socket> socket)
 {
     bool run = true;
     while (run)
@@ -31,6 +31,7 @@ std::task<> echo_socket(std::shared_ptr<Socket> socket)
         run = co_await inside_loop(*socket);
         std::cout << "END\n";
     }
+    
 }
 
 std::task<> accept(Socket& listen)
@@ -38,10 +39,11 @@ std::task<> accept(Socket& listen)
     while (true)
     {
         auto socket = co_await listen.accept();
-        auto t = echo_socket(socket);
+        auto t = echo_socket(std::move(socket));
         t.resume();
     }
 }
+
 
 int main()
 {

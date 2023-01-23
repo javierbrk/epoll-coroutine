@@ -21,7 +21,7 @@ public:
 
     ~Socket();
 
-    std::task<std::shared_ptr<Socket>> accept();
+    std::task<std::unique_ptr<Socket>> accept();
 
     SocketRecvOperation recv(void* buffer, std::size_t len);
     SocketSendOperation send(void* buffer, std::size_t len);

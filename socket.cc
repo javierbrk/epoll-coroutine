@@ -49,12 +49,12 @@ Socket::~Socket()
     close(fd_);
 }
 
-std::task<std::shared_ptr<Socket>> Socket::accept()
+std::task<std::unique_ptr<Socket>> Socket::accept()
 {
     int fd = co_await SocketAcceptOperation{this};
     if (fd == -1)
         throw std::runtime_error{"accept"};
-    co_return std::shared_ptr<Socket>(new Socket{fd, io_context_});
+    co_return std::unique_ptr<Socket>(new Socket{fd, io_context_});
 }
 
 SocketRecvOperation Socket::recv(void* buffer, std::size_t len)
