@@ -6,7 +6,9 @@ Exemple echo server with in the main.cc
 
 # My local improvements
 
-Fixed socket liberation and task destructors are working. 
+The original project has a problem with socket liberation. 
+
+This implementation fixes socket resource liberation and task destructor. 
 
 The branch named cppcoro includes the original task by lewissbaker wich also correctly frees the resources. 
 
