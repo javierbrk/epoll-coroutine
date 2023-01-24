@@ -1,9 +1,10 @@
 #include "io_context.hh"
 #include "socket.hh"
 
-#include "task.hh"
+//#include "task.hh"
+#include "task.hpp"
 
-std::task<bool> inside_loop(Socket& socket)
+cppcoro::task<bool> inside_loop(Socket& socket)
 {
     char buffer[42] = {0};
     ssize_t nbRecv = co_await socket.recv(buffer, sizeof buffer);
@@ -22,7 +23,7 @@ std::task<bool> inside_loop(Socket& socket)
     co_return true;
 }
 
-std::task<> echo_socket(std::unique_ptr<Socket> socket)
+cppcoro::task<> echo_socket(std::unique_ptr<Socket> socket)
 {
     bool run = true;
     while (run)
@@ -34,7 +35,7 @@ std::task<> echo_socket(std::unique_ptr<Socket> socket)
     
 }
 
-std::task<> accept(Socket& listen)
+cppcoro::task<> accept(Socket& listen)
 {
     while (true)
     {

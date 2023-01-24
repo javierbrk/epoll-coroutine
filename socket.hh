@@ -9,7 +9,7 @@
 #include "socket_accept_operation.hh"
 #include "socket_recv_operation.hh"
 #include "socket_send_operation.hh"
-#include "task.hh"
+#include "task.hpp"
 
 class Socket
 {
@@ -21,7 +21,7 @@ public:
 
     ~Socket();
 
-    std::task<std::unique_ptr<Socket>> accept();
+    cppcoro::task<std::unique_ptr<Socket>> accept();
 
     SocketRecvOperation recv(void* buffer, std::size_t len);
     SocketSendOperation send(void* buffer, std::size_t len);

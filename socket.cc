@@ -49,7 +49,7 @@ Socket::~Socket()
     close(fd_);
 }
 
-std::task<std::unique_ptr<Socket>> Socket::accept()
+cppcoro::task<std::unique_ptr<Socket>> Socket::accept()
 {
     int fd = co_await SocketAcceptOperation{this};
     if (fd == -1)
