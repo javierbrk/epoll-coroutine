@@ -1,0 +1,44 @@
+{
+    "files.associations": {
+        "coroutine": "cpp",
+        "bit": "cpp",
+        "compare": "cpp",
+        "new": "cpp",
+        "optional": "cpp",
+        "stdexcept": "cpp",
+        "string_view": "cpp",
+        "tuple": "cpp",
+        "type_traits": "cpp",
+        "utility": "cpp",
+        "*.tcc": "cpp",
+        "cctype": "cpp",
+        "clocale": "cpp",
+        "cmath": "cpp",
+        "concepts": "cpp",
+        "cstdint": "cpp",
+        "cstdio": "cpp",
+        "cstdlib": "cpp",
+        "cwchar": "cpp",
+        "cwctype": "cpp",
+        "exception": "cpp",
+        "initializer_list": "cpp",
+        "iosfwd": "cpp",
+        "iostream": "cpp",
+        "istream": "cpp",
+        "limits": "cpp",
+        "numbers": "cpp",
+        "ostream": "cpp",
+        "streambuf": "cpp",
+        "string": "cpp",
+        "system_error": "cpp",
+        "typeinfo": "cpp",
+        "atomic": "cpp"
+    },
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/jjorge/Desktop/epoll-coroutine",
+            "binaryPath": "/home/jjorge/Desktop/epoll-coroutine/main",
+            "binaryArgs": []
+        }
+    ]
+}

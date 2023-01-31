@@ -5,8 +5,6 @@
 #include <coroutine>
 #include <iostream>
 
-static int prcounter =0;
-
 namespace std
 {
     template <typename T>
@@ -16,16 +14,12 @@ namespace std
         template <typename T>
         struct promise_type_base
         {
-            int number=0;
             promise_type_base()
             {
-                number = prcounter;
-                prcounter++;
-                std::cout << number<<" -- Promise: ctor # \n";
+
             }
             ~promise_type_base()
             {
-                std::cout << number << " -- Promise: dtor\n";
             }
             coroutine_handle<> waiter; // who waits on this coroutine
             task<T> get_return_object();
@@ -86,17 +80,12 @@ namespace std
         }
         ~task()
         {
-            std::cout << "task destroy " << std::endl;
-
             if (handle_)
             {
-                std::cout << "efective task destroy " << std::endl;
-                std::cout << handle_.done() << std::endl;
-                handle_.destroy();
-            }
-            else
-            {
-                std::cout << "no hanle" << std::endl;
+                if (handle_.done())
+                {
+                    handle_.destroy();
+                }
             }
         }
 
